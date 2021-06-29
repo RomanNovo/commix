@@ -13,19 +13,17 @@ the Free Software Foundation, either version 3 of the License, or
 For more see the file 'readme/COPYING' for copying permission.
 """
 
+import sys
 from src.utils import settings
 
 """
-About: Replaces space character ('%20') with plus ('+').
-Notes: This tamper script works against all targets.
+About: Uses backticks instead of "$()" for commands substitution on the generated payloads.
+Notes: This tamper script works against *nix targets.
 """
 
-__tamper__ = "space2plus"
+__tamper__ = "backticks"
 
 settings.TAMPER_SCRIPTS[__tamper__] = True
-if settings.WHITESPACES[0] == "%20":
-  settings.WHITESPACES[0] = "+"
-else:
-  settings.WHITESPACES.append("+") 
-
+settings.USE_BACKTICKS = True
+  
 # eof 
